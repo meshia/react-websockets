@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useSocket } from './Hooks/useSocket';
 import type { PlotState } from './Hooks/useSocket';
+import Indicator from './Components/Indicator';
 // import { LineChart, XAxis, YAxis, CartesianGrid, Line } from 'recharts';
 import './App.css';
 
@@ -14,24 +15,11 @@ function App() {
 
   const { socket, isConnected } = useSocket({ endpoint: `localhost:8999`, token: randomUser });
 
-  // socket.on('open', (newState: PlotState) => {
-  //   console.log('open', newState);
-  //   setPlotData(newState);
-  // });
-
-  
-  socket.onopen = () => {
-    console.log('ws opened from outside')
-  };
-
-  socket.onclose = () => {
-      console.log('ws closed from outside');
-  };
-
   socket.onmessage = e => {
       if (!isConnected) return;
       const message = JSON.parse(e.data);
       console.log('e from outside', message);
+      setPlotData(message);
   };
 
   return (
@@ -44,18 +32,15 @@ function App() {
         <Line type="monotone" dataKey="pv" stroke="#82ca9d" />
       </LineChart> */}
       <header className="App-header">
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <Indicator isConnected={isConnected}/>
+        <div>
+          <h2>WILIOT</h2>
+          <span>Test</span>
+        </div>
       </header>
+      <section>
+
+      </section>
     </div>
   );
 }

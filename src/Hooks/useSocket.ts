@@ -11,22 +11,23 @@ export type PlotState = {
 };
 
 export function useSocket({endpoint, token } : { endpoint: string, token: string }) {
-    let socket = new WebSocket(`ws://${endpoint}`);
+    let socket = new WebSocket(`ws://${endpoint}/?access_token=${token}`);
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
     socket.onopen = () => {
         console.log('ws opened')
-        setIsConnected(true)
+        setIsConnected(true);
     };
     socket.onclose = () => {
         console.log('ws closed')
-        setIsConnected(false)
+        setIsConnected(false);
     };
 
     return () => {
-        if (socket.readyState === 1) { // <-- This is important
+        if (socket.readyState === 1) {
             socket.close();
+            setIsConnected(false);
         }
     }
   }, [endpoint]);
