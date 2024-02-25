@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import './App.css';
 import { useSocket } from './Hooks/useSocket';
-import type { PlotState } from './Hooks/useSocket';
 import Indicator from './Components/Indicator';
 import {
   LineChart,
@@ -13,8 +12,20 @@ import {
   Legend
 } from "recharts";
 
+export type DataType = {
+  id1_id: number,
+  temperature1: number,
+  id1: number | null,
+  id2_id: number,
+  temperature2: number,
+  id2: number | null
+  timestamp: string,
+};
+
 function App() {
-  const [plotData, setPlotData] = useState<PlotState[]>([]);
+  const [graphData, setGraphData] = useState<DataType[]>([]);
+  const [temp1, setTemp1] = useState(0);
+  const [temp2, setTemp2] = useState(0);
 
   const randomUser = useMemo(() => {
     const randomName = Math.random().toString(36).substring(7);
@@ -26,21 +37,26 @@ function App() {
   socket.onmessage = e => {
       if (!isConnected) return;
       const [ message1, message2 ] = JSON.parse(e.data);
-      const message: PlotState[] = [];
-      if(message1.data < 100) {
-        message.push(message1);
-      }
-      if(message2.data < 100) {
-        message.push(message2);
-      }
-      if(message.length > 1) {
-        setPlotData(prev => [...message, ...prev]);
+      if(message1.data < 100 && message2.data < 100) {
+        const newDate = new Date(message1.timestamp);
+        const message:DataType = {
+          timestamp: `${newDate.getHours()}:${newDate.getMinutes()}`,
+          id1_id: message1.id,
+          temperature1: message1.temperature,
+          id1: message1.data < 100 ? message1.data : null,
+          id2_id: message2.id,
+          temperature2: message2.temperature,
+          id2: message2.data < 100 ? message2.data : null,
+        };
+        setTemp1(message1.temperature);
+        setTemp2(message2.temperature);
+        if (graphData.length > 3) {
+          setGraphData(prev => [message, ...prev.slice(1)]);
+        } else {
+          setGraphData(prev => [message, ...prev]);
+        }
       }
   };
-
-  useEffect(()=> {
-    console.log("plotData", plotData)
-  }, [plotData]);
   
   return (
     <div className="App">
@@ -52,10 +68,20 @@ function App() {
         </div>
       </header>
       <section>
+      <div className='titles'>
+        <div className='title'>
+          <h2>ID 1</h2>
+          <span>{`Temp: ${temp1}`}</span>
+        </div>
+        <div className='title'>
+          <h2>ID 2</h2>
+          <span>{`Temp: ${temp2}`}</span>
+        </div>
+      </div>
       <LineChart
-        width={500}
+        width={800}
         height={300}
-        data={plotData}
+        data={graphData}
         margin={{
           top: 5,
           right: 30,
@@ -70,11 +96,11 @@ function App() {
         <Legend />
         <Line
           type="monotone"
-          dataKey="temperature"
+          dataKey="id1"
           stroke="#8884d8"
           activeDot={{ r: 8 }}
         />
-        <Line type="monotone" dataKey="data" stroke="#82ca9d" />
+        <Line type="monotone" dataKey="id2" stroke="#82ca9d" />
       </LineChart>
       </section>
     </div>

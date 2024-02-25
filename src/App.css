@@ -5,12 +5,19 @@
 .App-header {
   display: flex;
   background-color: #282c34;
-  display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
   color: white;
   padding: 2em;
+}
+
+.titles {
+  display: flex;
+  width: 50em;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
 }
 
 .indicator {
