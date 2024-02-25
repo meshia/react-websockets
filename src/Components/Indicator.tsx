@@ -1,12 +1,15 @@
+import { useEffect, useState } from 'react';
+
 interface IndicatorProps {
     isConnected: boolean
 }
 
-const Indicator: React.FC<IndicatorProps> = (isConnected: IndicatorProps) => {
+const Indicator: React.FC<IndicatorProps> = (props: IndicatorProps) => {
+
     return (
         <div className="indicator">
-            <span className={`dot ${isConnected ? 'green' : 'red'}`}></span>
-            <span>{isConnected ? 'Connected' : 'Not Connected'}</span>
+            <span className={`dot ${props.isConnected ? 'green' : 'red'}`}></span>
+            <span>{props.isConnected  ? 'Connected' : 'Not Connected'}</span>
         </div>
     )
 }

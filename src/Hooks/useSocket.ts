@@ -1,14 +1,11 @@
 import { useState, useEffect } from 'react';
 
 export type PlotState = {
-  question: string;
-  options: {
     id: number;
     timestamp: number,
     temperature: number,
     data: number
-  }[];
-};
+}[];
 
 export function useSocket({endpoint, token } : { endpoint: string, token: string }) {
     let socket = new WebSocket(`ws://${endpoint}/?access_token=${token}`);
@@ -16,11 +13,12 @@ export function useSocket({endpoint, token } : { endpoint: string, token: string
 
   useEffect(() => {
     socket.onopen = () => {
-        console.log('ws opened')
+        console.log('ws opened');
         setIsConnected(true);
+
     };
     socket.onclose = () => {
-        console.log('ws closed')
+        console.log('ws closed');
         setIsConnected(false);
     };
 
