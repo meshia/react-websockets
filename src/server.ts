@@ -27,11 +27,6 @@ wss.on('connection', (ws: WebSocket) => {
     ws.on('pong', () => {
         extWs.isAlive = true;
     });
-    
-    ws.on('open', () => {
-        console.log(`[Client] Connected.`);
-        ws.send(`HI! this is a client`);
-    })
 
     ws.on('error', (err) => {
         console.warn(`Client disconnected - reason: ${err}`);
